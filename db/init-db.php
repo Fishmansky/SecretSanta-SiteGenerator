@@ -1,6 +1,7 @@
 <?php
 session_start();
-require(dirname( __DIR__ ).'/functions/functions.php');
+require '../scripts/emaildbinit.php';
+require '../scripts/noemaildbinit.php';
 
 if(isset($_POST['dbhost']) && isset($_POST['dbuser']) && isset($_POST['dbpassword']) && isset($_POST['dbname']) && isset($_POST['option'])){
     $config = '<?php 
@@ -15,6 +16,7 @@ if(isset($_POST['dbhost']) && isset($_POST['dbuser']) && isset($_POST['dbpasswor
     $dbconfig = fopen("connection.php", "w");
     echo fwrite($dbconfig,$config);
     fclose($dbconfig);
+	require 'connection.php';
     if(!$conn){
         $_SESSION['error'] = "Incorrect database login data. Please fill the form again.";
         header('location: ../install.php');
@@ -23,16 +25,14 @@ if(isset($_POST['dbhost']) && isset($_POST['dbuser']) && isset($_POST['dbpasswor
     switch($_POST['option']){
         case 'email-included':
             if(!emaildbinit()){
-                $_SESSION['error'] = "The";
+                $_SESSION['error'] = "Błąd SQL!";
                 header('location: ../install.php');
-                exit();
             }
             break;
         case 'no-email':
             if(!noemaildbinit()){
                 $_SESSION['error'] = "Błąd SQL!";
                 header('location: ../install.php');
-                exit();
             }
             break;
         default:
