@@ -1,16 +1,15 @@
 <?php
 session_start();
-require '../scripts/emaildbinit.php';
-require '../scripts/noemaildbinit.php';
+require '../functions/functions.php';
 
-if(isset($_POST['dbhost']) && isset($_POST['dbuser']) && isset($_POST['dbpassword']) && isset($_POST['dbname']) && isset($_POST['option'])){
+if(isset($_POST['dbhost']) && isset($_POST['dbuser']) && isset($_POST['dbpassword']) && isset($_POST['dbname']) && isset($_POST['option']) && isset($_POST['players'])){
     $config = '<?php 
     $host = "'.$_POST[dbhost].'";
     $user = "'.$_POST[dbuser].'";
     $password = "'.$_POST[dbpassword].'";
     $dbname = "'.$_POST[dbname].'";
 
-    $conn = @new mysqli($host, $user, $password, $dbname);
+    $conn = new mysqli($host, $user, $password, $dbname);
     ?>';
 
     $dbconfig = fopen("connection.php", "w");
@@ -25,21 +24,31 @@ if(isset($_POST['dbhost']) && isset($_POST['dbuser']) && isset($_POST['dbpasswor
     switch($_POST['option']){
         case 'email-included':
             if(!emaildbinit()){
-                $_SESSION['error'] = "Błąd SQL!";
+                $_SESSION['error'] = "Error while creating table - operation aborted";
                 header('location: ../install.php');
+                exit();
+            } else {
+                $_SESSION['players'] =$_POST['players'];
+                header('location: ../install2.php');
+                exit();
             }
             break;
         case 'no-email':
             if(!noemaildbinit()){
-                $_SESSION['error'] = "Błąd SQL!";
+                $_SESSION['error'] = "Error while creating table - operation aborted";
                 header('location: ../install.php');
+                exit();
+            } else {
+                $_SESSION['players'] =$_POST['players'];
+                header('location: ../install2.php');
+                exit();
             }
             break;
         default:
             break;
     }
 } else {
-    $_SESSION['error'] = "Fill the furmular with data and choose the way of communication with players";
+    $_SESSION['error'] = "Fill the formular with data and choose the way of communication with players";
     header('location: ../install.php');
     exit();
 }

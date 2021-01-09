@@ -1,22 +1,11 @@
 <?php
-if(isset($_GET['method'])){
-	switch ($_GET['method']){
-	case 'pick':
-		if(isset($_POST['for'])){
-			$player = (int)$_GET['for'];
-			if(CheckPlayer($player)){
-				$res = GetAvailable();
-				PickFor($player, $res);
-			}
-		} else {
-			echo "Select player!";
-		}
-		break;	
-	default:
-		break;
-	}
-
-} else {
-echo "No method specified!";
+session_start();
+require "../functions/functions.php";
+if(isset($_POST['players'])){
+	$arr = $_POST['players'];
+	$player = $arr[0];
+	$chsn = PickFor($player);
+	$_SESSION["data"] = $chsn;
+	header('location: ../index.php');
 }
 ?>
